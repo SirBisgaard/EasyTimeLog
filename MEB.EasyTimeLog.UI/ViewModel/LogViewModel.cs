@@ -12,6 +12,7 @@ namespace MEB.EasyTimeLog.UI.ViewModel
     class LogViewModel : LogViewModelProperty, IViewModel
     {
         private LogView _view;
+        private bool _isPropertiesValid;
 
         public LogView View { get { return _view; } }
 
@@ -23,12 +24,34 @@ namespace MEB.EasyTimeLog.UI.ViewModel
                 DataContext = this,
                 WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner
             };
+
+            // Create a new instance of the commands.
+            LogCommand = new DelegateCommand(DoLogCommand, CanLogCommand);
+
+            // This is used to control, if the button is enabled.
+            _isPropertiesValid = false;
+            PropertyChanged += (s, e) =>
+            {
+                ValidateProperties();
+            };
         }
 
         public void Load()
         {
             // Start and show the view.
             _view.Show();
+        }
+
+        private void ValidateProperties()
+        {
+            TimeSpan from;
+            TimeSpan to;
+
+            // Try to parse from and to, and save the result.
+            _isPropertiesValid = TimeSpan.TryParse(TimeFrom, out from) && TimeSpan.TryParse(TimeTo, out to);
+
+            // Raise the can execute on the log button.
+            LogCommand.RaiseCanExecuteChanged();
         }
 
         #region Commands
@@ -41,7 +64,7 @@ namespace MEB.EasyTimeLog.UI.ViewModel
 
         private bool CanLogCommand(object arg)
         {
-            return CanExecute;
+            return _isPropertiesValid;
         }
         #endregion
     }
