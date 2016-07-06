@@ -12,6 +12,11 @@ namespace MEB.EasyTimeLog.Model.Domain
         {
             Logs = new List<TimeEntry>();
             Tasks = new List<TaskEntry>();
+
+            // Test Data. Will be removed.
+            Tasks.Add(new TaskEntry { Name = "Task 1" });
+            Tasks.Add(new TaskEntry { Name = "Task 2" });
+            Tasks.Add(new TaskEntry { Name = "Task 3" });
         }
 
         public List<TimeEntry> Logs { get; set; }

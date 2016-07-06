@@ -1,6 +1,7 @@
 ﻿using MEB.EasyTimeLog.DataAccess.DataStore;
 using MEB.EasyTimeLog.Model.Domain;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MEB.EasyTimeLog.Model
@@ -22,7 +23,7 @@ namespace MEB.EasyTimeLog.Model
             _currentSheet = new TimeSheet();
         }
 
-        public TaskEntry CreateTask(string name)
+        public TaskEntry CreateTaskEntry(string name)
         {
             // Check if exist.
             if(TaskExist(name))
@@ -44,10 +45,21 @@ namespace MEB.EasyTimeLog.Model
             return entry;
         }
 
+        public void CreateTimeEntry(TaskEntry task, TimeSpan from, TimeSpan to, DateTime day)
+        {
+            
+        }
+
         public bool TaskExist(string name)
         {
             // Return if there are any task with the same name.
             return _currentSheet.Tasks.Any(task => task.Name == name);
+        }
+
+        public List<TaskEntry> GetAllTasks()
+        {
+            // Return the list from the time sheet.
+            return _currentSheet.Tasks;
         }
     }
 }

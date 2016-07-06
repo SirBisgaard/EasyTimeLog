@@ -1,13 +1,14 @@
 ﻿using MEB.EasyTimeLog.UI.ViewModel.Property;
 using MEB.EasyTimeLog.UI.View;
 using MEB.EasyTimeLog.UI.Common;
-using System;
+using MEB.EasyTimeLog.Model;
 
 namespace MEB.EasyTimeLog.UI.ViewModel
 {
     public class MainViewModel : MainViewModelProperty, IViewModel
     {
         private MainView _view;
+        private DomainRepository _repo;
 
         public MainView View { get { return _view; } }
 
@@ -19,6 +20,9 @@ namespace MEB.EasyTimeLog.UI.ViewModel
                 DataContext = this,
                 WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen
             };
+
+            // Create a new instance of the domain repository.
+            _repo = new DomainRepository();
 
             // Create a new instance of the commands.
             LogCommand = new DelegateCommand(DoLogCommand, CanLogCommand);
@@ -51,6 +55,7 @@ namespace MEB.EasyTimeLog.UI.ViewModel
             viewModel.View.Closed += (s, e) =>
             {
                 CanExecute = true;
+                View.Focus();
             };
 
             // Load the view model.

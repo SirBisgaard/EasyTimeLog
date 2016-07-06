@@ -19,12 +19,12 @@
 
         <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,5,0">
             <TextBlock>Task</TextBlock>
-            <ComboBox IsEnabled="{Binding CanExecute}">
-                
+            <ComboBox IsEditable="True" Text="{Binding SelectedTask, UpdateSourceTrigger=PropertyChanged}"  IsEnabled="{Binding CanExecute}" ItemsSource="{Binding Tasks}">
+
             </ComboBox>
-            
+
             <TextBlock Margin="0,5,0,0">Date</TextBlock>
-            <DatePicker SelectedDate="{Binding SelectedDate, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanExecute}"/>
+            <DatePicker  SelectedDate="{Binding SelectedDate, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanExecute}"/>
         </StackPanel>
 
         <StackPanel Grid.Row="0" Grid.Column="1" Margin="5,0,0,0">

@@ -103,7 +103,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\MEB.EasyTimeLog.Model\MEB.EasyTimeLog.Model.csproj">
+      <Project>{503535F9-0A9E-4350-8B5D-9149325A8AB5}</Project>
+      <Name>MEB.EasyTimeLog.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Page Include="View\LogView.xaml">
       <SubType>Designer</SubType>
