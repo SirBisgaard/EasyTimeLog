@@ -1,4 +1,5 @@
-﻿using MEB.EasyTimeLog.UI.View;
+﻿using MEB.EasyTimeLog.UI.Common;
+using MEB.EasyTimeLog.UI.View;
 using MEB.EasyTimeLog.UI.ViewModel.Property;
 using System;
 using System.Collections.Generic;
@@ -29,5 +30,19 @@ namespace MEB.EasyTimeLog.UI.ViewModel
             // Start and show the view.
             _view.Show();
         }
+
+        #region Commands
+        public DelegateCommand LogCommand { get; set; }
+
+        private void DoLogCommand(object sender)
+        {
+
+        }
+
+        private bool CanLogCommand(object arg)
+        {
+            return CanExecute;
+        }
+        #endregion
     }
 }

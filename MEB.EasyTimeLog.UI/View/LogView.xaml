@@ -5,9 +5,39 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MEB.EasyTimeLog.UI.View"
         mc:Ignorable="d"
-        ResizeMode="CanMinimize"
-        Title="Easy Time Log - Log" Height="200" Width="300">
-    <Grid>
-        
+        ResizeMode="NoResize"
+        Title="Log" Height="180" Width="300">
+    <Grid Margin="10 ">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,5,0">
+            <TextBlock>Task</TextBlock>
+            <ComboBox>
+                
+            </ComboBox>
+            
+            <TextBlock Margin="0,5,0,0">Date</TextBlock>
+            <DatePicker />
+        </StackPanel>
+
+        <StackPanel Grid.Row="0" Grid.Column="1" Margin="5,0,0,0">
+            <TextBlock>From</TextBlock>
+            <TextBox Height="22" />
+
+            <TextBlock Margin="0,5,0,0">To</TextBlock>
+            <TextBox Height="22"/>
+        </StackPanel>
+
+
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" FlowDirection="RightToLeft">
+            <Button Width="70" Height="22" Command="{Binding LogCommand}">Log</Button>
+        </StackPanel>
     </Grid>
 </Window>

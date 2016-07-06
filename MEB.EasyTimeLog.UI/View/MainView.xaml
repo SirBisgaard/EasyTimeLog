@@ -59,7 +59,7 @@
         </Grid>
 
         <StackPanel Grid.ColumnSpan="2" Grid.Row="1" Margin="0,5,0,0">
-            <Button Width="70" HorizontalAlignment="Right" Command="{Binding LogCommand}">Log!</Button>
+            <Button Width="70" Height="22" HorizontalAlignment="Right" Command="{Binding LogCommand}">Log!</Button>
         </StackPanel>
     </Grid>
 </Window>
