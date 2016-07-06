@@ -4,10 +4,7 @@ using MEB.EasyTimeLog.UI.Common;
 using MEB.EasyTimeLog.UI.View;
 using MEB.EasyTimeLog.UI.ViewModel.Property;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using System.Windows;
 
 namespace MEB.EasyTimeLog.UI.ViewModel
@@ -60,8 +57,8 @@ namespace MEB.EasyTimeLog.UI.ViewModel
 
             // Try to parse the properties.
             _isPropertiesValid =
-                TimeSpan.TryParse(TimeFrom, out from) &&
-                TimeSpan.TryParse(TimeTo, out to) && 
+                TimeSpan.TryParseExact(TimeFrom, TimeUtil.TimeSpanFormat, null, out from) &&
+                TimeSpan.TryParseExact(TimeTo, TimeUtil.TimeSpanFormat, null, out to) && 
                 !string.IsNullOrEmpty(SelectedTask) &&
                 TimeSpan.Compare(from, to) == -1;
 
@@ -76,6 +73,8 @@ namespace MEB.EasyTimeLog.UI.ViewModel
         {
             // Create a task object.
             var task = _repo.CreateTaskEntry(SelectedTask);
+            var from = TimeSpan.ParseExact(TimeFrom, TimeUtil.TimeSpanFormat, null);
+            var to = TimeSpan.ParseExact(TimeTo, TimeUtil.TimeSpanFormat, null);
 
             // Try to create a time entry.
             try
@@ -83,14 +82,39 @@ namespace MEB.EasyTimeLog.UI.ViewModel
                 // The time spans are validated, so they are just parsed.
                 _repo.CreateTimeEntry(
                     task, 
-                    TimeSpan.Parse(TimeFrom), 
-                    TimeSpan.Parse(TimeTo), 
+                    from, 
+                    to, 
                     SelectedDate);
+
+                // Close window.
+                _view.Close();
             }
             catch (TimeConflictException timeConflict)
             {
-
+                // Show a nice message for the user...
+                MessageBox.Show(
+                    "The time is conflict with an existing entry you made.\n" +
+                    $"The existing entry is {timeConflict.ConflictingEntry.Task.Name}: {timeConflict.ConflictingEntry.TimeFrom.ToString(TimeUtil.TimeSpanFormat)} - {timeConflict.ConflictingEntry.TimeTo.ToString(TimeUtil.TimeSpanFormat)}.\n" +
+                    $"Yours is {task.Name}: {from.ToString(TimeUtil.TimeSpanFormat)} - {to.ToString(TimeUtil.TimeSpanFormat)}.",
+                    "Time Conflict Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Exclamation,
+                    MessageBoxResult.OK);
             }
+            catch(Exception ex)
+            {
+                // Print the exception for debugging.
+                Debug.WriteLine(ex);
+
+                // Show a some how nice message...
+                MessageBox.Show(
+                    "There was an unexpected error.",
+                    "Unknown Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error,
+                    MessageBoxResult.OK);
+            }
+
         }
 
         private bool CanLogCommand(object arg)

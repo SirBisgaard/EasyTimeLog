@@ -46,6 +46,7 @@
     <Compile Include="Domain\TaskEntry.cs" />
     <Compile Include="Exception\TimeConflictException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TimeUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MEB.EasyTimeLog.DataAccess\MEB.EasyTimeLog.DataAccess.csproj">

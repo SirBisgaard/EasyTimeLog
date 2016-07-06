@@ -1,5 +1,6 @@
 ﻿using MEB.EasyTimeLog.DataAccess.DataStore;
 using MEB.EasyTimeLog.Model.Domain;
+using MEB.EasyTimeLog.Model.Exception;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,18 +10,16 @@ namespace MEB.EasyTimeLog.Model
     public class DomainRepository
     {
         private IDataStore _dataStore;
-        private TimeSheet _currentSheet;
+        private static TimeSheet _currentSheet = new TimeSheet();
 
         public DomainRepository(IDataStore dataStore)
         {
             _dataStore = dataStore;
-            _currentSheet = new TimeSheet();
         }
 
         public DomainRepository()
         {
             _dataStore = new JsonDataStore();
-            _currentSheet = new TimeSheet();
         }
 
         public TaskEntry CreateTaskEntry(string name)
@@ -47,13 +46,38 @@ namespace MEB.EasyTimeLog.Model
 
         public void CreateTimeEntry(TaskEntry task, TimeSpan from, TimeSpan to, DateTime day)
         {
-            
+            // Create a new time instance.
+            var newEntry = new TimeEntry
+            {
+                Task = task,
+                TimeFrom = from,
+                TimeTo = to,
+                Day = day
+            };
+
+            // Check if there is any conflicts.
+            if(_currentSheet.Logs.Any(entry => TimeUtil.Conflict(entry, newEntry)))
+            {
+                // Throw a new exception, with the first conflict.
+                // First is acceptable because there can be no conflicts. 
+                throw new TimeConflictException(
+                    _currentSheet.Logs.First(
+                        entry => TimeUtil.Conflict(entry, newEntry)));
+            }
+
+            _currentSheet.Logs.Add(newEntry);
         }
 
         public bool TaskExist(string name)
         {
             // Return if there are any task with the same name.
             return _currentSheet.Tasks.Any(task => task.Name == name);
+        }
+
+        public List<TimeEntry> GetAllLogs()
+        {
+            // Return the list from the time sheet.
+            return _currentSheet.Logs;
         }
 
         public List<TaskEntry> GetAllTasks()

@@ -23,7 +23,7 @@ namespace MEB.EasyTimeLog.UI.ViewModel.Property
             // Set default values.
             _tasks = new ObservableCollection<string>();
             _selectedTask = string.Empty;
-            _selectedDate = DateTime.Now;
+            _selectedDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
             _timeFrom = string.Empty;
             _timeTo = string.Empty;
         }
