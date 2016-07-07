@@ -12,26 +12,10 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="0" Grid.Row="0" Margin="0,0,5,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-
-            <ComboBox Grid.Row="0" Margin="0,0,0,5" SelectedIndex="0" SelectedItem="{Binding SelectedType}" IsEnabled="{Binding CanExecute}">
-                <ComboBoxItem Content="Tasks" />
-            </ComboBox>
-
-            <ListBox Grid.Row="1" ItemsSource="{Binding TypeList}" IsEnabled="{Binding CanExecute}">
-                
-            </ListBox>
-        </Grid>
-
-        <Grid Grid.Column="1" Grid.Row="0" Margin="5,0,0,0">
+        <Grid Grid.Row="0" Margin="5,0,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
@@ -41,16 +25,15 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <ComboBox Grid.Row="0" Grid.Column="0" Margin="0,0,5,5" SelectedIndex="0" SelectedItem="{Binding SelectedSortType}" IsEnabled="{Binding CanExecute}">
+            <ComboBox Grid.Row="0" Grid.Column="0" Margin="0,0,5,5" SelectedIndex="0" SelectedItem="{Binding SelectedSortType, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanExecute}">
+                <ComboBoxItem Content="Tasks" />
                 <ComboBoxItem Content="Day" />
                 <ComboBoxItem Content="Week" />
                 <ComboBoxItem Content="Month" />
-                <ComboBoxItem Content="Quarter" />
-                <ComboBoxItem Content="Half Year" />
                 <ComboBoxItem Content="Year" />
             </ComboBox>
 
-            <ComboBox Grid.Row="0" Grid.Column="1" Margin="0,0,0,5" ItemsSource="{Binding SortValues}" SelectedValue="{Binding SelectedSortValue}" IsEnabled="{Binding CanExecute}">
+            <ComboBox Grid.Row="0" Grid.Column="1" Margin="0,0,0,5" ItemsSource="{Binding SortValues}" SelectedValue="{Binding SelectedSortValue, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanExecute}">
             </ComboBox>
 
             <ListBox Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding LogList}" IsEnabled="{Binding CanExecute}">
@@ -58,8 +41,11 @@
             </ListBox>
         </Grid>
 
-        <StackPanel Grid.ColumnSpan="2" Grid.Row="1" Margin="0,5,0,0">
-            <Button Width="70" Height="22" HorizontalAlignment="Right" Command="{Binding LogCommand}">Log</Button>
+        <StackPanel Grid.Row="1" Margin="0,5,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
+            <TextBlock VerticalAlignment="Center">Total Hours: </TextBlock>
+            <TextBlock VerticalAlignment="Center" Margin="5,0,20,0" Text="{Binding TotalHours}"></TextBlock>
+            <Button Width="70" Height="22" Margin="10,0" Command="{Binding RemoveCommand}">Remove</Button>
+            <Button Width="70" Height="22" Command="{Binding LogCommand}">Log</Button>
         </StackPanel>
     </Grid>
 </Window>

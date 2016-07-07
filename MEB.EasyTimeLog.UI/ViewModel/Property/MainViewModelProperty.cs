@@ -11,9 +11,9 @@ namespace MEB.EasyTimeLog.UI.ViewModel.Property
         private ObservableCollection<string> _logList;
         private ObservableCollection<string> _sortValues;
 
-        private string _selectedType;
         private string _selectedSortValue;
         private string _selectedSortType;
+        private string _totalHours;
 
         public MainViewModelProperty()
         {
@@ -24,8 +24,8 @@ namespace MEB.EasyTimeLog.UI.ViewModel.Property
             _typeList = new ObservableCollection<string>();
             _logList = new ObservableCollection<string>();
             _sortValues = new ObservableCollection<string>();
-            _selectedType = "Tasks";
-            _selectedSortType = "Day";
+            _selectedSortType = "Tasks";
+            _totalHours = "0";
             _selectedSortValue = string.Empty;
         }
 
@@ -33,12 +33,6 @@ namespace MEB.EasyTimeLog.UI.ViewModel.Property
         {
             set { SetField(ref _canExecute, value); }
             get { return _canExecute; }
-        }
-        
-        public ObservableCollection<string> TypeList
-        {
-            set { SetField(ref _typeList, value); }
-            get { return _typeList; }
         }
 
         public ObservableCollection<string> LogList
@@ -52,23 +46,23 @@ namespace MEB.EasyTimeLog.UI.ViewModel.Property
             set { SetField(ref _sortValues, value); }
             get { return _sortValues; }
         }
-
-        public string SelectedType
-        {
-            set { SetField(ref _selectedType, value); }
-            get { return _selectedType; }
-        }
-
+        
         public string SelectedSortValue
         {
-            set { SetField(ref _selectedSortValue, value); }
+            set { SetField(ref _selectedSortValue, value?.Replace("System.Windows.Controls.ComboBoxItem: ", "")); }
             get { return _selectedSortValue; }
         }
 
         public string SelectedSortType
         {
-            set { SetField(ref _selectedSortType, value); }
+            set { SetField(ref _selectedSortType, value?.Replace("System.Windows.Controls.ComboBoxItem: ", "")); }
             get { return _selectedSortType; }
+        }
+
+        public string TotalHours
+        {
+            set { SetField(ref _totalHours, value); }
+            get { return _totalHours; }
         }
     }
 }

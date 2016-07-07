@@ -3,7 +3,11 @@ using MEB.EasyTimeLog.UI.View;
 using MEB.EasyTimeLog.UI.Common;
 using MEB.EasyTimeLog.Model;
 using System;
+using System.Linq;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using MEB.EasyTimeLog.Model.Domain;
 
 namespace MEB.EasyTimeLog.UI.ViewModel
 {
@@ -34,57 +38,29 @@ namespace MEB.EasyTimeLog.UI.ViewModel
             {
                 LogCommand.RaiseCanExecuteChanged();
 
-                // If the selected type is changed, reload the type list.
-                if(e.PropertyName == nameof(SelectedType))
-                {
-                    LoadTypeList();
-                }
-
                 // If the selected sort type is changed, reload the sort list.
                 if (e.PropertyName == nameof(SelectedSortType))
                 {
                     LoadSortList();
+                }
+
+                // If the selected sort type is changed, reload the sort list.
+                if (e.PropertyName == nameof(SelectedSortValue))
+                {
+                    LoadLogs();
                 }
             };
         }
 
         public void Load()
         {
-            // Load the type list.
-            LoadTypeList();
-            // Load the current logs.
+            // Refresh the sort values.
+            LoadSortList();
+            // Refresh the logs.
             LoadLogs();
 
             // Start and show the view.
             _view.Show();
-        }
-
-        public void LoadTypeList()
-        {
-            // Clear the list if its dirty.
-            if (TypeList.Count > 0)
-            {
-                TypeList.Clear();
-            }
-
-            // Find the type and fill it with it.
-            if(SelectedType == "Tasks")
-            {
-                // Load all task names into the properties.
-                _repo.GetAllTasks().ForEach(task => TypeList.Add(task.Name));
-            }
-        }
-
-        public void LoadLogs()
-        {
-            // Clear the list if its dirty.
-            if (LogList.Count > 0)
-            {
-                LogList.Clear();
-            }
-
-            // Load all logs into the properties.
-            _repo.GetAllLogs().ForEach(entry => LogList.Add(entry.ToString(TimeUtil.DefaultTimeEntryFormat)));
         }
 
         private void LoadSortList()
@@ -97,20 +73,105 @@ namespace MEB.EasyTimeLog.UI.ViewModel
 
             var listOfSortValues = new List<string>();
 
-            if(SelectedSortType == "Day")
+            if (SelectedSortType == "Tasks")
+            {
+                // Get the list of sort values.
+                _repo.GetAllTasks().ForEach(e => listOfSortValues.Add(e.Name));
+            }
+            if (SelectedSortType == "Day")
             {
                 // Get the list of sort values.
                 listOfSortValues.AddRange(TimeUtil.GetListOfAvalibleDays(_repo.GetAllLogs()));
             }
+            if (SelectedSortType == "Week")
+            {
+                // Get the list of sort values.
+                listOfSortValues.AddRange(TimeUtil.GetListOfAvalibleWeeks(_repo.GetAllLogs()));
+            }
+            if (SelectedSortType == "Month")
+            {
+                // Get the list of sort values.
+                listOfSortValues.AddRange(TimeUtil.GetListOfAvalibleMonths(_repo.GetAllLogs()));
+            }
+            if (SelectedSortType == "Year")
+            {
+                // Get the list of sort values.
+                listOfSortValues.AddRange(TimeUtil.GetListOfAvalibleYear(_repo.GetAllLogs()));
+            }
 
             // Load all logs into the properties.
             listOfSortValues.ForEach(value => SortValues.Add(value));
+
             // Select the first sort value from the list.
-            if(SortValues.Count > 0)
+            if (SortValues.Count > 0)
             {
                 // Select first value.
                 SelectedSortValue = SortValues[0];
             }
+        }
+
+        public void LoadLogs()
+        {
+            // Clear the list if its dirty.
+            if (LogList.Count > 0)
+            {
+                LogList.Clear();
+            }
+
+            IEnumerable<TimeEntry> entries = null;
+
+            if (SelectedSortType == "Tasks")
+            {
+                // Load all logs into the properties.
+                entries = _repo.GetAllLogs().Where(e => e.Task.Name == SelectedSortValue);
+                foreach (var entry in entries)
+                {
+                    LogList.Add(entry.ToString(TimeUtil.DefaultTimeEntryFormat));
+                }
+            }
+            if (SelectedSortType == "Day")
+            {
+                DateTime selectedDay;
+
+                if (DateTime.TryParse(SelectedSortValue, out selectedDay))
+                {
+                    // Load all logs into the properties.
+                    entries = _repo.GetAllLogs().Where(entry => entry.Day == selectedDay);
+                    foreach (var entry in entries)
+                    {
+                        LogList.Add(entry.ToString(TimeUtil.DefaultTimeEntryFormat));
+                    }
+                }
+            }
+            if (SelectedSortType == "Week")
+            {
+                // Load all logs into the properties.
+                entries = _repo.GetAllLogs().Where(e => $"{e.Day.Year} - Week {TimeUtil.Calendar.GetWeekOfYear(e.Day, CalendarWeekRule.FirstDay, DayOfWeek.Monday)}" == SelectedSortValue);
+                foreach (var entry in entries)
+                {
+                    LogList.Add(entry.ToString(TimeUtil.DefaultTimeEntryFormat));
+                }
+            }
+            if (SelectedSortType == "Month")
+            {
+                // Load all logs into the properties.
+                entries = _repo.GetAllLogs().Where(e => e.Day.ToString(TimeUtil.DateMonthFormat) == SelectedSortValue);
+                foreach (var entry in entries)
+                {
+                    LogList.Add(entry.ToString(TimeUtil.DefaultTimeEntryFormat));
+                }
+            }
+            if (SelectedSortType == "Year")
+            {
+                // Load all logs into the properties.
+                entries = _repo.GetAllLogs().Where(e => e.Day.Year.ToString() == SelectedSortValue);
+                foreach (var entry in entries)
+                {
+                    LogList.Add(entry.ToString(TimeUtil.DefaultTimeEntryFormat));
+                }
+            }
+
+            TotalHours = TimeUtil.GetDuration(entries);
         }
 
         #region Commands
@@ -127,12 +188,10 @@ namespace MEB.EasyTimeLog.UI.ViewModel
             viewModel.View.Owner = _view;
             viewModel.View.Closed += (s, e) =>
             {
-                // Refresh the type list.
-                LoadTypeList();
-                // Refresh the logs.
-                LoadLogs();
                 // Refresh the sort values.
                 LoadSortList();
+                // Refresh the logs.
+                LoadLogs();
 
                 // Enable the view and focus it.
                 CanExecute = true;

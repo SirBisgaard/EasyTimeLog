@@ -1,6 +1,7 @@
 ﻿using MEB.EasyTimeLog.Model.Domain;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace MEB.EasyTimeLog.Model
 {
@@ -8,7 +9,12 @@ namespace MEB.EasyTimeLog.Model
     {
         public const string TimeSpanFormat = @"hh\:mm";
         public const string TimeSpanHourFormat = @"h\:mm";
+
+        public const string DateMonthFormat = "yyyy - MM";
+
         public const string DefaultTimeEntryFormat = "{0}: {2} - {3} Duration={4}";
+
+        public static Calendar Calendar => DateTimeFormatInfo.CurrentInfo.Calendar;
 
         public static bool Conflict(TimeEntry entry1, TimeEntry entry2)
         {
@@ -23,6 +29,9 @@ namespace MEB.EasyTimeLog.Model
                     // Check if the to time is inside.
                     entry1.TimeFrom.CompareTo(entry2.TimeTo) == -1 &&
                     entry1.TimeTo.CompareTo(entry2.TimeTo) == 1) || (
+                    // Check if the to time is the same.
+                    entry1.TimeFrom.CompareTo(entry2.TimeFrom) == 0 &&
+                    entry1.TimeTo.CompareTo(entry2.TimeTo) == 0) || (
                     // Check if the time is over lapping.
                     entry1.TimeFrom.CompareTo(entry2.TimeFrom) == 1 &&
                     entry1.TimeTo.CompareTo(entry2.TimeTo) == -1))
@@ -34,12 +43,27 @@ namespace MEB.EasyTimeLog.Model
             return false;
         }
 
-        internal static string GetDuration(TimeSpan from, TimeSpan to)
+        public static string GetDuration(IEnumerable<TimeEntry> entries)
         {
-            // Create simple date times from time spans.
-            var fromDate = new DateTime(1, 1, 1, from.Hours, from.Minutes, 0);
-            var toDate = new DateTime(1, 1, 1, to.Hours, to.Minutes, 0);
+            if(entries == null)
+            {
+                return "0";
+            }
 
+            var hours = 0d;
+
+            foreach (var entry in entries)
+            {
+                // Get the duration and return it in a nice format.
+                var time = entry.TimeFrom.Subtract(entry.TimeTo);
+                hours += time.Hours + (time.Minutes / 60d);
+            }
+
+            return Math.Abs(hours).ToString();
+        }
+
+        public static string GetDuration(TimeSpan from, TimeSpan to)
+        {
             // Get the duration and return it in a nice format.
             return from.Subtract(to).ToString(TimeSpanHourFormat);
         }
@@ -55,10 +79,70 @@ namespace MEB.EasyTimeLog.Model
             entries.ForEach(entry => dates.Add(entry.Day));
 
             // Convert all entries in the set to string.
-            foreach(var date in dates)
+            foreach (var date in dates)
             {
-                dateStrings.Add(date.ToShortDateString());
-            }         
+                dateStrings.Add(date.ToString("yyyy - MM - dd"));
+            }
+
+            return dateStrings;
+        }
+
+        public static IList<string> GetListOfAvalibleWeeks(List<TimeEntry> entries)
+        {
+            // Create a list to contain all date strings.
+            var dateStrings = new List<string>();
+
+            // Convert all entries in the set to string.
+            foreach (var e in entries)
+            {
+                var s = $"{e.Day.Year} - Week {Calendar.GetWeekOfYear(e.Day, CalendarWeekRule.FirstDay, DayOfWeek.Monday)}";
+                if (!dateStrings.Contains(s))
+                {
+                    dateStrings.Add(s);
+                }
+            }
+
+            dateStrings.Sort();
+
+            return dateStrings;
+        }
+
+        public static IList<string> GetListOfAvalibleYear(List<TimeEntry> entries)
+        {
+            // Create a list to contain all date strings.
+            var dateStrings = new List<string>();
+
+            // Convert all entries in the set to string.
+            foreach (var e in entries)
+            {
+                var s = e.Day.Year.ToString();
+                if (!dateStrings.Contains(s))
+                {
+                    dateStrings.Add(s);
+                }
+            }
+
+            dateStrings.Sort();
+
+            return dateStrings;
+        }
+
+        public static IList<string> GetListOfAvalibleMonths(List<TimeEntry> entries)
+        {
+            // Create a list to contain all date strings.
+            var dateStrings = new List<string>();
+
+            // Convert all entries in the set to string.
+            foreach (var e in entries)
+            {
+                var s = e.Day.ToString("yyyy - MM");
+                if (!dateStrings.Contains(s))
+                {
+                    dateStrings.Add(s);
+                }
+            }
+
+            dateStrings.Sort();
 
             return dateStrings;
         }
