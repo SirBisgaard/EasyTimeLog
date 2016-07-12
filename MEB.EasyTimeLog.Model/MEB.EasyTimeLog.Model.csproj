@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DomainRepository.cs" />
+    <Compile Include="DomainFactory.cs" />
     <Compile Include="Domain\TimeEntry.cs" />
     <Compile Include="Domain\TimeSheet.cs" />
     <Compile Include="Domain\TaskEntry.cs" />

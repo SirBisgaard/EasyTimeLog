@@ -44,7 +44,7 @@
         <StackPanel Grid.Row="1" Margin="0,5,0,0" Orientation="Horizontal" HorizontalAlignment="Right">
             <TextBlock VerticalAlignment="Center">Total Hours: </TextBlock>
             <TextBlock VerticalAlignment="Center" Margin="5,0,20,0" Text="{Binding TotalHours}"></TextBlock>
-            <Button Width="70" Height="22" Margin="10,0" Command="{Binding RemoveCommand}">Remove</Button>
+            <Button Width="70" Height="22" Margin="10,0" Command="{Binding EditCommand}">Edit</Button>
             <Button Width="70" Height="22" Command="{Binding LogCommand}">Log</Button>
         </StackPanel>
     </Grid>

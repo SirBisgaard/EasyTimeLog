@@ -27,8 +27,8 @@ namespace MEB.EasyTimeLog.UI.ViewModel
                 WindowStartupLocation = WindowStartupLocation.CenterOwner
             };
 
-            // Create a new instance of the domain repository.
-            _repo = new DomainRepository();
+            // Get a new instance of the domain repository.
+            _repo = DomainFactory.GetRepository();
 
             // Create a new instance of the commands.
             LogCommand = new DelegateCommand(DoLogCommand, CanLogCommand);

@@ -10,7 +10,7 @@ namespace MEB.EasyTimeLog.Model
     public class DomainRepository
     {
         private IDataStore _dataStore;
-        private static TimeSheet _currentSheet = new TimeSheet();
+        private TimeSheet _currentSheet = new TimeSheet();
 
         public DomainRepository(IDataStore dataStore)
         {
