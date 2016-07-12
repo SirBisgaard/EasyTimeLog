@@ -1,10 +1,11 @@
-﻿using System;
+﻿using MEB.EasyTimeLog.DataAccess;
+using System;
 
 namespace MEB.EasyTimeLog.Model.Domain
 {
-    public class TaskEntry
+    public class TaskEntity : Entity
     {
-        public TaskEntry()
+        public TaskEntity() : base(new Guid())
         {
             Name = string.Empty;
         }

@@ -5,7 +5,6 @@ using MEB.EasyTimeLog.Model;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using MEB.EasyTimeLog.Model.Domain;
 
@@ -118,7 +117,7 @@ namespace MEB.EasyTimeLog.UI.ViewModel
                 LogList.Clear();
             }
 
-            IEnumerable<TimeEntry> entries = null;
+            IEnumerable<TimeEntity> entries = null;
 
             if (SelectedSortType == "Tasks")
             {

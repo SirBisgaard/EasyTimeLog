@@ -40,12 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DomainRepository.cs" />
-    <Compile Include="DomainFactory.cs" />
     <Compile Include="Domain\TimeEntry.cs" />
-    <Compile Include="Domain\TimeSheet.cs" />
-    <Compile Include="Domain\TaskEntry.cs" />
+    <Compile Include="Domain\TaskEntity.cs" />
     <Compile Include="Exception\TimeConflictException.cs" />
+    <Compile Include="Common\IRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TimeUtil.cs" />
   </ItemGroup>

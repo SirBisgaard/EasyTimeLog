@@ -16,7 +16,7 @@ namespace MEB.EasyTimeLog.Model
 
         public static Calendar Calendar => DateTimeFormatInfo.CurrentInfo.Calendar;
 
-        public static bool Conflict(TimeEntry entry1, TimeEntry entry2)
+        public static bool Conflict(TimeEntity entry1, TimeEntity entry2)
         {
             // Check if the day are equal.
             if (entry1.Day.CompareTo(entry2.Day) == 0)
@@ -43,7 +43,7 @@ namespace MEB.EasyTimeLog.Model
             return false;
         }
 
-        public static string GetDuration(IEnumerable<TimeEntry> entries)
+        public static string GetDuration(IEnumerable<TimeEntity> entries)
         {
             if(entries == null)
             {
@@ -68,7 +68,7 @@ namespace MEB.EasyTimeLog.Model
             return from.Subtract(to).ToString(TimeSpanHourFormat);
         }
 
-        public static List<string> GetListOfAvalibleDays(List<TimeEntry> entries)
+        public static List<string> GetListOfAvalibleDays(List<TimeEntity> entries)
         {
             // Create a set of dates for only getting one of each day.
             var dates = new SortedSet<DateTime>();
@@ -87,7 +87,7 @@ namespace MEB.EasyTimeLog.Model
             return dateStrings;
         }
 
-        public static IList<string> GetListOfAvalibleWeeks(List<TimeEntry> entries)
+        public static IList<string> GetListOfAvalibleWeeks(List<TimeEntity> entries)
         {
             // Create a list to contain all date strings.
             var dateStrings = new List<string>();
@@ -107,7 +107,7 @@ namespace MEB.EasyTimeLog.Model
             return dateStrings;
         }
 
-        public static IList<string> GetListOfAvalibleYear(List<TimeEntry> entries)
+        public static IList<string> GetListOfAvalibleYear(List<TimeEntity> entries)
         {
             // Create a list to contain all date strings.
             var dateStrings = new List<string>();
@@ -127,7 +127,7 @@ namespace MEB.EasyTimeLog.Model
             return dateStrings;
         }
 
-        public static IList<string> GetListOfAvalibleMonths(List<TimeEntry> entries)
+        public static IList<string> GetListOfAvalibleMonths(List<TimeEntity> entries)
         {
             // Create a list to contain all date strings.
             var dateStrings = new List<string>();
