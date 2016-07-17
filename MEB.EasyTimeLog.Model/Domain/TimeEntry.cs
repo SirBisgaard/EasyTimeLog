@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace MEB.EasyTimeLog.Model.Domain
 {
-    public class TimeEntity : Entity
+    public class TimeEntity
     {
-        public TimeEntity() : base(new Guid())
+        public TimeEntity() 
         {
 
         }

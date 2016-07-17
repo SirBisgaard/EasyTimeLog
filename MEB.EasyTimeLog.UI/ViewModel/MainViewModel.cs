@@ -13,7 +13,7 @@ namespace MEB.EasyTimeLog.UI.ViewModel
     public class MainViewModel : MainViewModelProperty, IViewModel
     {
         private MainView _view;
-        private DomainRepository _repo;
+        //private DomainRepository _repo;
 
         public MainView View { get { return _view; } }
 
@@ -27,7 +27,7 @@ namespace MEB.EasyTimeLog.UI.ViewModel
             };
 
             // Get a new instance of the domain repository.
-            _repo = DomainFactory.GetRepository();
+            //_repo = DomainFactory.GetRepository();
 
             // Create a new instance of the commands.
             LogCommand = new DelegateCommand(DoLogCommand, CanLogCommand);
@@ -75,27 +75,27 @@ namespace MEB.EasyTimeLog.UI.ViewModel
             if (SelectedSortType == "Tasks")
             {
                 // Get the list of sort values.
-                _repo.GetAllTasks().ForEach(e => listOfSortValues.Add(e.Name));
+                //_repo.GetAllTasks().ForEach(e => listOfSortValues.Add(e.Name));
             }
             if (SelectedSortType == "Day")
             {
                 // Get the list of sort values.
-                listOfSortValues.AddRange(TimeUtil.GetListOfAvalibleDays(_repo.GetAllLogs()));
+                //listOfSortValues.AddRange(TimeUtil.GetListOfAvalibleDays(_repo.GetAllLogs()));
             }
             if (SelectedSortType == "Week")
             {
                 // Get the list of sort values.
-                listOfSortValues.AddRange(TimeUtil.GetListOfAvalibleWeeks(_repo.GetAllLogs()));
+                //listOfSortValues.AddRange(TimeUtil.GetListOfAvalibleWeeks(_repo.GetAllLogs()));
             }
             if (SelectedSortType == "Month")
             {
                 // Get the list of sort values.
-                listOfSortValues.AddRange(TimeUtil.GetListOfAvalibleMonths(_repo.GetAllLogs()));
+                //listOfSortValues.AddRange(TimeUtil.GetListOfAvalibleMonths(_repo.GetAllLogs()));
             }
             if (SelectedSortType == "Year")
             {
                 // Get the list of sort values.
-                listOfSortValues.AddRange(TimeUtil.GetListOfAvalibleYear(_repo.GetAllLogs()));
+                //listOfSortValues.AddRange(TimeUtil.GetListOfAvalibleYear(_repo.GetAllLogs()));
             }
 
             // Load all logs into the properties.
@@ -122,7 +122,7 @@ namespace MEB.EasyTimeLog.UI.ViewModel
             if (SelectedSortType == "Tasks")
             {
                 // Load all logs into the properties.
-                entries = _repo.GetAllLogs().Where(e => e.Task.Name == SelectedSortValue);
+                //entries = _repo.GetAllLogs().Where(e => e.Task.Name == SelectedSortValue);
                 foreach (var entry in entries)
                 {
                     LogList.Add(entry.ToString(TimeUtil.DefaultTimeEntryFormat));
@@ -135,7 +135,7 @@ namespace MEB.EasyTimeLog.UI.ViewModel
                 if (DateTime.TryParse(SelectedSortValue, out selectedDay))
                 {
                     // Load all logs into the properties.
-                    entries = _repo.GetAllLogs().Where(entry => entry.Day == selectedDay);
+                    //entries = _repo.GetAllLogs().Where(entry => entry.Day == selectedDay);
                     foreach (var entry in entries)
                     {
                         LogList.Add(entry.ToString(TimeUtil.DefaultTimeEntryFormat));
@@ -145,7 +145,7 @@ namespace MEB.EasyTimeLog.UI.ViewModel
             if (SelectedSortType == "Week")
             {
                 // Load all logs into the properties.
-                entries = _repo.GetAllLogs().Where(e => $"{e.Day.Year} - Week {TimeUtil.Calendar.GetWeekOfYear(e.Day, CalendarWeekRule.FirstDay, DayOfWeek.Monday)}" == SelectedSortValue);
+                //entries = _repo.GetAllLogs().Where(e => $"{e.Day.Year} - Week {TimeUtil.Calendar.GetWeekOfYear(e.Day, CalendarWeekRule.FirstDay, DayOfWeek.Monday)}" == SelectedSortValue);
                 foreach (var entry in entries)
                 {
                     LogList.Add(entry.ToString(TimeUtil.DefaultTimeEntryFormat));
@@ -154,7 +154,7 @@ namespace MEB.EasyTimeLog.UI.ViewModel
             if (SelectedSortType == "Month")
             {
                 // Load all logs into the properties.
-                entries = _repo.GetAllLogs().Where(e => e.Day.ToString(TimeUtil.DateMonthFormat) == SelectedSortValue);
+                //entries = _repo.GetAllLogs().Where(e => e.Day.ToString(TimeUtil.DateMonthFormat) == SelectedSortValue);
                 foreach (var entry in entries)
                 {
                     LogList.Add(entry.ToString(TimeUtil.DefaultTimeEntryFormat));
@@ -163,7 +163,7 @@ namespace MEB.EasyTimeLog.UI.ViewModel
             if (SelectedSortType == "Year")
             {
                 // Load all logs into the properties.
-                entries = _repo.GetAllLogs().Where(e => e.Day.Year.ToString() == SelectedSortValue);
+                //entries = _repo.GetAllLogs().Where(e => e.Day.Year.ToString() == SelectedSortValue);
                 foreach (var entry in entries)
                 {
                     LogList.Add(entry.ToString(TimeUtil.DefaultTimeEntryFormat));

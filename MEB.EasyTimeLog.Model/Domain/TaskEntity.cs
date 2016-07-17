@@ -3,9 +3,9 @@ using System;
 
 namespace MEB.EasyTimeLog.Model.Domain
 {
-    public class TaskEntity : Entity
+    public class TaskEntity
     {
-        public TaskEntity() : base(new Guid())
+        public TaskEntity() 
         {
             Name = string.Empty;
         }

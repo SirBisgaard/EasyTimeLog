@@ -12,7 +12,7 @@ namespace MEB.EasyTimeLog.UI.ViewModel
     class LogViewModel : LogViewModelProperty, IViewModel
     {
         private LogView _view;
-        private DomainRepository _repo;
+        //private DomainRepository _repo;
 
         private bool _isPropertiesValid;
 
@@ -28,7 +28,7 @@ namespace MEB.EasyTimeLog.UI.ViewModel
             };
 
             // Get a new instance of the domain repository.
-            _repo = DomainFactory.GetRepository();
+            //_repo = DomainFactory.GetRepository();
 
             // Create a new instance of the commands.
             LogCommand = new DelegateCommand(DoLogCommand, CanLogCommand);
@@ -44,7 +44,7 @@ namespace MEB.EasyTimeLog.UI.ViewModel
         public void Load()
         {
             // Load all task names into the properties.
-            _repo.GetAllTasks().ForEach(task => Tasks.Add(task.Name));
+            //_repo.GetAllTasks().ForEach(task => Tasks.Add(task.Name));
 
             // Start and show the view.
             _view.Show();
@@ -58,7 +58,7 @@ namespace MEB.EasyTimeLog.UI.ViewModel
             // Try to parse the properties.
             _isPropertiesValid =
                 TimeSpan.TryParseExact(TimeFrom, TimeUtil.TimeSpanFormat, null, out from) &&
-                TimeSpan.TryParseExact(TimeTo, TimeUtil.TimeSpanFormat, null, out to) && 
+                TimeSpan.TryParseExact(TimeTo, TimeUtil.TimeSpanFormat, null, out to) &&
                 !string.IsNullOrEmpty(SelectedTask) &&
                 TimeSpan.Compare(from, to) == -1;
 
@@ -72,7 +72,7 @@ namespace MEB.EasyTimeLog.UI.ViewModel
         private void DoLogCommand(object sender)
         {
             // Create a task object.
-            var task = _repo.CreateTaskEntry(SelectedTask);
+            //var task = _repo.CreateTaskEntry(SelectedTask);
             var from = TimeSpan.ParseExact(TimeFrom, TimeUtil.TimeSpanFormat, null);
             var to = TimeSpan.ParseExact(TimeTo, TimeUtil.TimeSpanFormat, null);
 
@@ -80,17 +80,18 @@ namespace MEB.EasyTimeLog.UI.ViewModel
             try
             {
                 // The time spans are validated, so they are just parsed.
-                _repo.CreateTimeEntry(
-                    task, 
-                    from, 
-                    to, 
-                    SelectedDate);
+                //_repo.CreateTimeEntry(
+                //    task, 
+                //    from, 
+                //    to, 
+                //    SelectedDate);
 
                 // Close window.
                 _view.Close();
             }
             catch (TimeConflictException timeConflict)
             {
+                /*
                 // Show a nice message for the user...
                 MessageBox.Show(
                     "The time is conflict with an existing entry you made.\n" +
@@ -100,8 +101,9 @@ namespace MEB.EasyTimeLog.UI.ViewModel
                     MessageBoxButton.OK,
                     MessageBoxImage.Exclamation,
                     MessageBoxResult.OK);
+                */
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 // Print the exception for debugging.
                 Debug.WriteLine(ex);
