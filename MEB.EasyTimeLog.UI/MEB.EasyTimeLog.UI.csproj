@@ -104,6 +104,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MEB.EasyTimeLog.Domain\MEB.EasyTimeLog.Domain.csproj">
+      <Project>{2B62537C-1A47-4B44-BFFC-F2A103E52976}</Project>
+      <Name>MEB.EasyTimeLog.Domain</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MEB.EasyTimeLog.Model\MEB.EasyTimeLog.Model.csproj">
       <Project>{503535F9-0A9E-4350-8B5D-9149325A8AB5}</Project>
       <Name>MEB.EasyTimeLog.Model</Name>

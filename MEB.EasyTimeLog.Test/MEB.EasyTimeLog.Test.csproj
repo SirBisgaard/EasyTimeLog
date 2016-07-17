@@ -56,6 +56,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Model\LogRepositoryTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataAccess\DataStoreTest.cs" />
   </ItemGroup>
@@ -64,9 +65,20 @@
       <Project>{9478CB96-90EA-4968-8E93-7443AD8784E7}</Project>
       <Name>MEB.EasyTimeLog.DataAccess</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MEB.EasyTimeLog.Domain\MEB.EasyTimeLog.Domain.csproj">
+      <Project>{2B62537C-1A47-4B44-BFFC-F2A103E52976}</Project>
+      <Name>MEB.EasyTimeLog.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MEB.EasyTimeLog.Model\MEB.EasyTimeLog.Model.csproj">
+      <Project>{503535F9-0A9E-4350-8B5D-9149325A8AB5}</Project>
+      <Name>MEB.EasyTimeLog.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Domain\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

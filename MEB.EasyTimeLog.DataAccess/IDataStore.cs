@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace MEB.EasyTimeLog.DataAccess
 {
-    public interface IDataStore<E> where E : class
+    public interface IDataStore<TE> where TE : class
     {
-        E Load(string name);
+        TE Load(string name);
 
-        void Save(string name, E element);
+        void Save(string name, TE element);
     }
 }
