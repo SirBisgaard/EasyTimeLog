@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using MEB.EasyTimeLog.Domain;
 
 namespace MEB.EasyTimeLog.Model
@@ -59,7 +60,7 @@ namespace MEB.EasyTimeLog.Model
                 hours += time.Hours + (time.Minutes / 60d);
             }
 
-            return Math.Abs(hours).ToString();
+            return Math.Round(Math.Abs(hours), 2).ToString();
         }
 
         public static string GetDuration(TimeSpan from, TimeSpan to)
@@ -68,7 +69,7 @@ namespace MEB.EasyTimeLog.Model
             return from.Subtract(to).ToString(TimeSpanHourFormat);
         }
 
-        public static List<string> GetListOfAvalibleDays(List<LogEntity> entries)
+        public static List<string> GetListOfAvalibleDays(IEnumerable<LogEntity> entries)
         {
             // Create a set of dates for only getting one of each day.
             var dates = new SortedSet<DateTime>();
@@ -76,7 +77,7 @@ namespace MEB.EasyTimeLog.Model
             var dateStrings = new List<string>();
 
             // Add the entry days to the set.
-            entries.ForEach(entry => dates.Add(entry.Day));
+            entries.ToList().ForEach(entry => dates.Add(entry.Day));
 
             // Convert all entries in the set to string.
             foreach (var date in dates)
@@ -87,7 +88,7 @@ namespace MEB.EasyTimeLog.Model
             return dateStrings;
         }
 
-        public static IList<string> GetListOfAvalibleWeeks(List<LogEntity> entries)
+        public static IList<string> GetListOfAvalibleWeeks(IEnumerable<LogEntity> entries)
         {
             // Create a list to contain all date strings.
             var dateStrings = new List<string>();
@@ -107,7 +108,7 @@ namespace MEB.EasyTimeLog.Model
             return dateStrings;
         }
 
-        public static IList<string> GetListOfAvalibleYear(List<LogEntity> entries)
+        public static IList<string> GetListOfAvalibleYear(IEnumerable<LogEntity> entries)
         {
             // Create a list to contain all date strings.
             var dateStrings = new List<string>();
@@ -127,7 +128,7 @@ namespace MEB.EasyTimeLog.Model
             return dateStrings;
         }
 
-        public static IList<string> GetListOfAvalibleMonths(List<LogEntity> entries)
+        public static IList<string> GetListOfAvalibleMonths(IEnumerable<LogEntity> entries)
         {
             // Create a list to contain all date strings.
             var dateStrings = new List<string>();

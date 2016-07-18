@@ -9,7 +9,7 @@ namespace MEB.EasyTimeLog.Domain
 
         }
 
-        public LogEntity() : base(Guid.NewGuid())
+        public LogEntity() : base(Guid.Empty)
         {
 
         }

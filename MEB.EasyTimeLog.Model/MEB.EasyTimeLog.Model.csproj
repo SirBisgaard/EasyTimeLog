@@ -48,6 +48,8 @@
     <Compile Include="IRepository.cs" />
     <Compile Include="LogRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RepositoryFactory.cs" />
+    <Compile Include="TaskRepository.cs" />
     <Compile Include="TimeUtil.cs" />
   </ItemGroup>
   <ItemGroup>

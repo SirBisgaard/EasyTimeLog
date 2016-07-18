@@ -9,11 +9,16 @@ namespace MEB.EasyTimeLog.Domain
             Name = string.Empty;
         }
 
-        public TaskEntity() : base(Guid.NewGuid())
+        public TaskEntity() : base(Guid.Empty)
         {
             Name = string.Empty;
         }
 
         public string Name { get; set; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

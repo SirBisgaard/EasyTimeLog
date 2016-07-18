@@ -1,34 +1,37 @@
 ﻿using MEB.EasyTimeLog.Model;
 using MEB.EasyTimeLog.Model.Exception;
+using MEB.EasyTimeLog.Domain;
 using MEB.EasyTimeLog.UI.Common;
 using MEB.EasyTimeLog.UI.View;
 using MEB.EasyTimeLog.UI.ViewModel.Property;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 
 namespace MEB.EasyTimeLog.UI.ViewModel
 {
-    class LogViewModel : LogViewModelProperty, IViewModel
+    public class LogViewModel : LogViewModelProperty, IViewModel
     {
-        private LogView _view;
-        //private DomainRepository _repo;
+        private readonly IRepository<LogEntity, Guid> _logRepository;
+        private readonly IRepository<TaskEntity, Guid> _taskRepository;
 
         private bool _isPropertiesValid;
 
-        public LogView View { get { return _view; } }
+        public LogView View { get; }
 
         public LogViewModel()
         {
             // Create a new instance of the log view.
-            _view = new LogView
+            View = new LogView
             {
                 DataContext = this,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner
             };
 
             // Get a new instance of the domain repository.
-            //_repo = DomainFactory.GetRepository();
+            _logRepository = RepositoryFactory.GetRepository<LogEntity, Guid>();
+            _taskRepository = RepositoryFactory.GetRepository<TaskEntity, Guid>();
 
             // Create a new instance of the commands.
             LogCommand = new DelegateCommand(DoLogCommand, CanLogCommand);
@@ -44,10 +47,10 @@ namespace MEB.EasyTimeLog.UI.ViewModel
         public void Load()
         {
             // Load all task names into the properties.
-            //_repo.GetAllTasks().ForEach(task => Tasks.Add(task.Name));
+            _taskRepository.GetAll().ToList().ForEach(task => Tasks.Add(task.Name));
 
             // Start and show the view.
-            _view.Show();
+            View.Show();
         }
 
         private void ValidateProperties()
@@ -72,36 +75,41 @@ namespace MEB.EasyTimeLog.UI.ViewModel
         private void DoLogCommand(object sender)
         {
             // Create a task object.
-            //var task = _repo.CreateTaskEntry(SelectedTask);
+            var task = _taskRepository.Save(new TaskEntity()
+            {
+                Name = SelectedTask
+            });
+            
+
             var from = TimeSpan.ParseExact(TimeFrom, TimeUtil.TimeSpanFormat, null);
             var to = TimeSpan.ParseExact(TimeTo, TimeUtil.TimeSpanFormat, null);
 
             // Try to create a time entry.
             try
             {
-                // The time spans are validated, so they are just parsed.
-                //_repo.CreateTimeEntry(
-                //    task, 
-                //    from, 
-                //    to, 
-                //    SelectedDate);
+                _logRepository.Save(new LogEntity
+                {
+                    Task = task.Id,
+                    TimeFrom = from,
+                    TimeTo = to,
+                    Day = SelectedDate
+                });
 
                 // Close window.
-                _view.Close();
+                View.Close();
             }
             catch (TimeConflictException timeConflict)
             {
-                /*
                 // Show a nice message for the user...
                 MessageBox.Show(
                     "The time is conflict with an existing entry you made.\n" +
-                    $"The existing entry is {timeConflict.ConflictingEntry.Task.Name}: {timeConflict.ConflictingEntry.TimeFrom.ToString(TimeUtil.TimeSpanFormat)} - {timeConflict.ConflictingEntry.TimeTo.ToString(TimeUtil.TimeSpanFormat)}.\n" +
+                    $"The existing entry is {_taskRepository.Get(timeConflict.ConflictingEntry.Task).Name}: {timeConflict.ConflictingEntry.TimeFrom.ToString(TimeUtil.TimeSpanFormat)} - {timeConflict.ConflictingEntry.TimeTo.ToString(TimeUtil.TimeSpanFormat)}.\n" +
                     $"Yours is {task.Name}: {from.ToString(TimeUtil.TimeSpanFormat)} - {to.ToString(TimeUtil.TimeSpanFormat)}.",
                     "Time Conflict Error",
                     MessageBoxButton.OK,
                     MessageBoxImage.Exclamation,
                     MessageBoxResult.OK);
-                */
+                
             }
             catch (Exception ex)
             {
