@@ -13,7 +13,7 @@ namespace MEB.EasyTimeLog.Test.Model
         [TestCategory("LogRepository")]
         public void TestMethod1()
         {
-            IRepository<LogEntity, Guid> repository = new LogRepository(new JsonDataStore());
+            IRepository<LogEntity, Guid> repository = new LogRepository(new JsonDataStore(), new TaskRepository(new JsonDataStore()));
 
             var testEntity = new LogEntity(Guid.Empty)
             {

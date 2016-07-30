@@ -5,9 +5,9 @@ using MEB.EasyTimeLog.Model;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
-using System.Threading;
+using System.Windows.Navigation;
+using MEB.EasyTimeLog.DataAccess;
 using MEB.EasyTimeLog.Domain;
 
 namespace MEB.EasyTimeLog.UI.ViewModel
@@ -16,10 +16,11 @@ namespace MEB.EasyTimeLog.UI.ViewModel
     {
         private readonly IRepository<LogEntity, Guid> _logRepository;
         private readonly IRepository<TaskEntity, Guid> _taskRepository;
+        private readonly ISettingsStore<string, string> _settingsStore;
 
         public MainView View { get; }
 
-        public MainViewModel()
+        public MainViewModel(ISettingsStore<string, string> settingsStore, IRepository<LogEntity, Guid> logRepository, IRepository<TaskEntity, Guid> taskRepository)
         {
             // Create a new instance of the main view.
             View = new MainView
@@ -29,8 +30,11 @@ namespace MEB.EasyTimeLog.UI.ViewModel
             };
 
             // Get a new instance of the domain repository.
-            _logRepository = RepositoryFactory.GetRepository<LogEntity, Guid>();
-            _taskRepository = RepositoryFactory.GetRepository<TaskEntity, Guid>();
+            _logRepository = logRepository;
+            _taskRepository = taskRepository;
+
+            // Get a instance of the settings store.
+            _settingsStore = settingsStore;
 
             // Create a new instance of the commands.
             LogCommand = new DelegateCommand(DoLogCommand, CanLogCommand);
@@ -41,139 +45,112 @@ namespace MEB.EasyTimeLog.UI.ViewModel
             {
                 LogCommand.RaiseCanExecuteChanged();
 
-                // If the selected sort type is changed, reload the sort list.
                 if (e.PropertyName == nameof(SelectedSortType))
                 {
-                    LoadSortList();
+                    // Load the sort values.
+                    LoadSortValues();
                 }
-
-                // If the selected sort type is changed, reload the sort list.
                 if (e.PropertyName == nameof(SelectedSortValue))
                 {
-                    LoadLogs();
+                    // Load the log entities.
+                    LoadLogEntities();
                 }
+
+                // If the selected value is changed, notify the edit button.
+                if (e.PropertyName == nameof(SelectedValue))
+                {
+                    EditCommand.RaiseCanExecuteChanged();
+                }
+            };
+
+            View.Closed += (s, e) =>
+            {
+                _settingsStore.Save(nameof(SelectedSortType), SelectedSortType);
+                _settingsStore.Save(nameof(SelectedSortValue), SelectedSortValue);
             };
         }
 
         public void Load()
         {
             // Refresh the sort values.
-            LoadSortList();
-            // Refresh the logs.
-            LoadLogs();
+            LoadSortValues();
+
+            // Load the last used settinggs.
+            SelectedSortType = _settingsStore.Get(nameof(SelectedSortType));
+            SelectedSortValue = _settingsStore.Get(nameof(SelectedSortValue));
+
+            // Select the default if empty.
+            if (string.IsNullOrEmpty(SelectedSortValue))
+            {
+                SelectedSortType = "Task";
+            }
 
             // Start and show the view.
             View.Show();
         }
 
-        private void LoadSortList()
+        private void LoadSortValues()
         {
-            // Clear the list if its dirty.
-            if (SortValues.Count > 0)
-            {
-                SortValues.Clear();
-            }
+            var selectedSortValue = SelectedSortValue;
 
+            // Clear the lists before adding new data.
+            SortValues.Clear();
+            LogList.Clear();
+
+            // Get the sort types.
             var listOfSortValues = new List<string>();
-
-            if (SelectedSortType == "Tasks")
+            switch (SelectedSortType)
             {
-                // Get the list of sort values.
-                listOfSortValues.AddRange(_taskRepository.GetAll().Select(task => task.ToString()));
-            }
-            if (SelectedSortType == "Day")
-            {
-                // Get the list of sort values.
-                listOfSortValues.AddRange(TimeUtil.GetListOfAvalibleDays(_logRepository.GetAll()));
-            }
-            if (SelectedSortType == "Week")
-            {
-                // Get the list of sort values.
-                listOfSortValues.AddRange(TimeUtil.GetListOfAvalibleWeeks(_logRepository.GetAll()));
-            }
-            if (SelectedSortType == "Month")
-            {
-                // Get the list of sort values.
-                listOfSortValues.AddRange(TimeUtil.GetListOfAvalibleMonths(_logRepository.GetAll()));
-            }
-            if (SelectedSortType == "Year")
-            {
-                // Get the list of sort values.
-                listOfSortValues.AddRange(TimeUtil.GetListOfAvalibleYear(_logRepository.GetAll()));
+                case "Task":
+                    // Get the list of sort values.
+                    listOfSortValues.AddRange(_taskRepository.GetAll().Select(task => task.ToString()));
+                    break;
+                case "Day":
+                    // Get the list of sort values.
+                    listOfSortValues.AddRange(TimeUtil.GetListOfAvalibleDays(_logRepository.GetAll()));
+                    break;
+                case "Week":
+                    // Get the list of sort values.
+                    listOfSortValues.AddRange(TimeUtil.GetListOfAvalibleWeeks(_logRepository.GetAll()));
+                    break;
+                case "Month":
+                    // Get the list of sort values.
+                    listOfSortValues.AddRange(TimeUtil.GetListOfAvalibleMonths(_logRepository.GetAll()));
+                    break;
+                case "Year":
+                    // Get the list of sort values.
+                    listOfSortValues.AddRange(TimeUtil.GetListOfAvalibleYear(_logRepository.GetAll()));
+                    break;
             }
 
-            // Load all logs into the properties.
+            // Insert the sort values into the list.
             listOfSortValues.ForEach(s => SortValues.Add(s));
 
-            // Select the first sort value from the list.
-            if (SortValues.Count > 0)
-            {
-                // Select first value.
-                SelectedSortValue = SortValues[0];
-            }
+            // Select the last selected value if it is still in the list,
+            // or just select the first item in list.
+            SelectedSortValue = SortValues.Contains(selectedSortValue) ?
+                selectedSortValue : SortValues.FirstOrDefault();
         }
 
-        public void LoadLogs()
+        private void LoadLogEntities()
         {
-            // Clear the list if its dirty.
-            if (LogList.Count > 0)
+            // Clear the list of logs.
+            LogList.Clear();
+
+
+            // Get all the logs from the selected sort type and sort value.
+            var entities = _logRepository.GetAll(SelectedSortType, SelectedSortValue);
+            
+            // Add the entities to the list.
+            foreach (var entry in entities)
             {
-                LogList.Clear();
+                LogList.Add(entry);
             }
 
-            List<LogEntity> entries = null;
-
-            if (SelectedSortType == "Tasks")
-            {
-                // Load all logs into the properties.
-                entries = _logRepository.GetAll().Where(e => _taskRepository.Get(e.Task)?.Name == SelectedSortValue).ToList();
-            }
-            if (SelectedSortType == "Day")
-            {
-                DateTime selectedDay;
-
-                if (DateTime.TryParse(SelectedSortValue, out selectedDay))
-                {
-                    // Load all logs into the properties.
-                    entries = _logRepository.GetAll().Where(entry => entry.Day == selectedDay).ToList();
-                }
-            }
-            if (SelectedSortType == "Week")
-            {
-                // Load all logs into the properties.
-                entries = _logRepository.GetAll().Where(e => $"{e.Day.Year} - Week {TimeUtil.Calendar.GetWeekOfYear(e.Day, CalendarWeekRule.FirstDay, DayOfWeek.Monday)}" == SelectedSortValue).ToList();
-            }
-            if (SelectedSortType == "Month")
-            {
-                // Load all logs into the properties.
-                entries = _logRepository.GetAll().Where(e => e.Day.ToString(TimeUtil.DateMonthFormat) == SelectedSortValue).ToList();
-            }
-            if (SelectedSortType == "Year")
-            {
-                // Load all logs into the properties.
-                entries = _logRepository.GetAll().Where(e => e.Day.Year.ToString() == SelectedSortValue).ToList();
-            }
-
-            if (entries == null)
-            {
-                TotalHours = "0";
-                return;
-            }
-
-            foreach (var entry in entries)
-            {
-                // ReSharper disable once UseStringInterpolation
-                LogList.Add(string.Format(
-                    "{3} {0}: {1} - {2} Duration={4}",
-                    _taskRepository.Get(entry.Task),
-                    entry.TimeFrom.ToString(TimeUtil.TimeSpanFormat),
-                    entry.TimeTo.ToString(TimeUtil.TimeSpanFormat),
-                    entry.Day.ToShortDateString(),
-                    TimeUtil.GetDuration(entry.TimeFrom, entry.TimeTo)));
-            }
-
-            TotalHours = TimeUtil.GetDuration(entries);
+            // Calculate the total hours.
+            TotalHours = LogList.Count == 0 ? "0" : TimeUtil.GetDuration(entities);
         }
+
 
         #region Commands
         public DelegateCommand LogCommand { get; }
@@ -185,15 +162,13 @@ namespace MEB.EasyTimeLog.UI.ViewModel
             CanExecute = false;
 
             // Create a instance of the log view model.
-            var viewModel = new LogViewModel();
+            var viewModel = new NewLogViewModel(_logRepository, _taskRepository);
             // Set the ownership and a listener on the close event.
             viewModel.View.Owner = View;
             viewModel.View.Closed += (s, e) =>
             {
                 // Refresh the sort values.
-                LoadSortList();
-                // Refresh the logs.
-                LoadLogs();
+                LoadSortValues();
 
                 // Enable the view and focus it.
                 CanExecute = true;
@@ -211,12 +186,30 @@ namespace MEB.EasyTimeLog.UI.ViewModel
 
         private void DoEditCommand(object sender)
         {
-            throw new NotImplementedException();
+            // Disable interface.
+            CanExecute = false;
+
+            // Create a instance of the log view model.
+            var viewModel = new EditLogViewModel(_logRepository, _taskRepository, SelectedValue);
+            // Set the ownership and a listener on the close event.
+            viewModel.View.Owner = View;
+            viewModel.View.Closed += (s, e) =>
+            {
+                // Refresh the sort values.
+                LoadSortValues();
+
+                // Enable the view and focus it.
+                CanExecute = true;
+                View.Focus();
+            };
+
+            // Load the view model.
+            viewModel.Load();
         }
 
         private bool CanEditCommand(object arg)
         {
-            return false;
+            return SelectedValue != null;
         }
         #endregion
     }

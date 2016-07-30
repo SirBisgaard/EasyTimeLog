@@ -16,6 +16,12 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <AssemblyInfoFilePath>Properties\AssemblyInfo.cs</AssemblyInfoFilePath>
+    <UpdateAssemblyVersion>True</UpdateAssemblyVersion>
+    <UpdateAssemblyFileVersion>True</UpdateAssemblyFileVersion>
+    <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
+    <AssemblyVersionSettings>IncrementOnDemand.Increment.None.None</AssemblyVersionSettings>
+    <AssemblyFileVersionSettings>IncrementOnDemand.Increment.None.None</AssemblyFileVersionSettings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -43,6 +49,10 @@
     <ApplicationIcon>Resources\icon_time.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -70,13 +80,18 @@
     </Compile>
     <Compile Include="Common\DelegateCommand.cs" />
     <Compile Include="Common\Observable.cs" />
+    <Compile Include="ViewModel\EditLogViewModel.cs" />
     <Compile Include="ViewModel\IViewModel.cs" />
-    <Compile Include="ViewModel\LogViewModel.cs" />
+    <Compile Include="ViewModel\NewLogViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
-    <Compile Include="ViewModel\Property\LogViewModelProperty.cs" />
+    <Compile Include="ViewModel\Property\EditLogViewModelProperty.cs" />
+    <Compile Include="ViewModel\Property\NewLogViewModelProperty.cs" />
     <Compile Include="ViewModel\Property\MainViewModelProperty.cs" />
-    <Compile Include="View\LogView.xaml.cs">
-      <DependentUpon>LogView.xaml</DependentUpon>
+    <Compile Include="View\NewLogView.xaml.cs">
+      <DependentUpon>NewLogView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\EditLogView.xaml.cs">
+      <DependentUpon>EditLogView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
@@ -86,11 +101,6 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -98,7 +108,7 @@
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -111,6 +121,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MEB.EasyTimeLog.DataAccess\MEB.EasyTimeLog.DataAccess.csproj">
+      <Project>{9478CB96-90EA-4968-8E93-7443AD8784E7}</Project>
+      <Name>MEB.EasyTimeLog.DataAccess</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MEB.EasyTimeLog.Domain\MEB.EasyTimeLog.Domain.csproj">
       <Project>{2B62537C-1A47-4B44-BFFC-F2A103E52976}</Project>
       <Name>MEB.EasyTimeLog.Domain</Name>
@@ -121,7 +135,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="View\LogView.xaml">
+    <Page Include="View\NewLogView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\EditLogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -130,9 +148,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Service\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Resource Include="FodyWeavers.xml" />
   </ItemGroup>

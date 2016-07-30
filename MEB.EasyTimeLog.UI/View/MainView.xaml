@@ -25,19 +25,13 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <ComboBox Grid.Row="0" Grid.Column="0" Margin="0,0,5,5" SelectedIndex="0" SelectedItem="{Binding SelectedSortType, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanExecute}">
-                <ComboBoxItem Content="Tasks" />
-                <ComboBoxItem Content="Day" />
-                <ComboBoxItem Content="Week" />
-                <ComboBoxItem Content="Month" />
-                <ComboBoxItem Content="Year" />
+            <ComboBox Grid.Row="0" Grid.Column="0" Margin="0,0,5,5"  ItemsSource="{Binding SortTypes}" SelectedValue="{Binding SelectedSortType, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanExecute}">
             </ComboBox>
 
             <ComboBox Grid.Row="0" Grid.Column="1" Margin="0,0,0,5" ItemsSource="{Binding SortValues}" SelectedValue="{Binding SelectedSortValue, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanExecute}">
             </ComboBox>
 
-            <ListBox Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding LogList}" IsEnabled="{Binding CanExecute}">
-                
+            <ListBox Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" ItemsSource="{Binding LogList}" SelectedValue="{Binding SelectedValue}" IsEnabled="{Binding CanExecute}" >
             </ListBox>
         </Grid>
 

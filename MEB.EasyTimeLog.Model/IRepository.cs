@@ -1,12 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace MEB.EasyTimeLog.Model
 {
     public interface IRepository<TE, in TK>
     {
         TE Get(TK key);
-        IEnumerable<TE> GetAll();
+        IList<TE> GetAll();
+        IList<TE> GetAll(string sortType, string sortValue);
         TE Save(TE entity);
+        void Delete(TK key);
 
 
         void LoadEntities();

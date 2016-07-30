@@ -15,11 +15,13 @@ namespace MEB.EasyTimeLog.Model
         public const string DataStoreName = "Logs";
 
         private readonly IDataStore<JObject> _dataStore;
+        private readonly IRepository<TaskEntity, Guid> _taskRepository;
         private readonly Dictionary<Guid, LogEntity> _entities;
 
-        public LogRepository(IDataStore<JObject> dataStore)
+        public LogRepository(IDataStore<JObject> dataStore, IRepository<TaskEntity, Guid> taskRepository)
         {
             _dataStore = dataStore;
+            _taskRepository = taskRepository;
             _entities = new Dictionary<Guid, LogEntity>();
 
             LoadEntities();
@@ -30,9 +32,50 @@ namespace MEB.EasyTimeLog.Model
             return _entities[key];
         }
 
-        public IEnumerable<LogEntity> GetAll()
+        public IList<LogEntity> GetAll()
         {
-            return _entities.Values;
+            var entities = _entities.Values.ToList();
+
+            entities.Sort((e1, e2) => string.CompareOrdinal(e1.ToString(), e2.ToString()));
+
+            return entities;
+        }
+
+        public IList<LogEntity> GetAll(string sortType, string sortValue)
+        {
+            var logEntities = new List<LogEntity>();
+
+            switch (sortType)
+            {
+                case "Task":
+                    // Load all logs into the properties.
+                    logEntities.AddRange(_entities.Values.Where(e => e.TaskRef.Name == sortValue));
+                    break;
+                case "Day":
+                    DateTime selectedDay;
+                    if (DateTime.TryParse(sortValue, out selectedDay))
+                    {
+                        // Load all logs into the properties.
+                        logEntities.AddRange(_entities.Values.Where(e => e.Day == selectedDay));
+                    }
+                    break;
+                case "Week":
+                    // Load all logs into the properties.
+                    logEntities.AddRange(_entities.Values.Where(e => $"{e.Day.Year} - Week {TimeUtil.Calendar.GetWeekOfYear(e.Day, CalendarWeekRule.FirstDay, DayOfWeek.Monday)}" == sortValue));
+                    break;
+                case "Month":
+                    // Load all logs into the properties.
+                    logEntities.AddRange(_entities.Values.Where(e => e.Day.ToString(TimeUtil.DateMonthFormat) == sortValue));
+                    break;
+                case "Year":
+                    // Load all logs into the properties.
+                    logEntities.AddRange(_entities.Values.Where(e => e.Day.Year.ToString() == sortValue));
+                    break;
+            }
+
+            logEntities.Sort((entity1, entity2) => string.CompareOrdinal(entity1.ToString(), entity2.ToString()));
+
+            return logEntities;
         }
 
         public LogEntity Save(LogEntity entity)
@@ -47,26 +90,45 @@ namespace MEB.EasyTimeLog.Model
                         existingEntiry => TimeUtil.Conflict(existingEntiry, entity)));
             }
 
-            Guid newId;
-            do
+            if (!_entities.ContainsKey(entity.Id))
             {
-                newId = Guid.NewGuid();    
+                Guid newId;
+                do
+                {
+                    newId = Guid.NewGuid();
+                } while (_entities.ContainsKey(newId));
+
+                entity = new LogEntity(newId)
+                {
+                    TimeFrom = entity.TimeFrom,
+                    TimeTo = entity.TimeTo,
+                    Task = entity.Task,
+                    Day = entity.Day,
+                    TaskRef = _taskRepository.Get(entity.Task)
+                };
+
+                _entities.Add(newId, entity);
             }
-            while (_entities.ContainsKey(newId));
-
-            var newEntity = new LogEntity(newId)
+            else
             {
-                TimeFrom = entity.TimeFrom,
-                TimeTo = entity.TimeTo,
-                Task =  entity.Task,
-                Day = entity.Day
-            };
-
-            _entities.Add(newId, newEntity);
+                _entities[entity.Id] = entity;
+            }
 
             SaveEntities();
 
-            return newEntity;
+            return entity;
+        }
+
+        public void Delete(Guid key)
+        {
+            if (!_entities.ContainsKey(key))
+            {
+                return;
+            }
+
+            _entities.Remove(key);
+
+            SaveEntities();
         }
 
         public void LoadEntities()
@@ -118,7 +180,8 @@ namespace MEB.EasyTimeLog.Model
                 TimeFrom = timeFrom,
                 TimeTo = timeTo,
                 Day = day,
-                Task = taskId
+                Task = taskId,
+                TaskRef = _taskRepository.Get(taskId)
             };
 
             return log;

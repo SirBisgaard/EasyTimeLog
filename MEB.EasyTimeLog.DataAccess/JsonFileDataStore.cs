@@ -67,11 +67,7 @@ namespace MEB.EasyTimeLog.DataAccess
 
             var path = Path.Combine(_baseDirectory, name + ".json");
 
-            using (var fileStream = File.Open(path, FileMode.OpenOrCreate))
-            using (var writer = new StreamWriter(fileStream))
-            {
-                writer.Write(element.ToString(Formatting.Indented));
-            }
+            File.WriteAllText(path, element.ToString(Formatting.Indented));
         }
     }
 }

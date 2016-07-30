@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Globalization;
 using System.Collections.Generic;
 using MEB.EasyTimeLog.Domain;
 using MEB.EasyTimeLog.DataAccess;
@@ -28,9 +27,16 @@ namespace MEB.EasyTimeLog.Model
             return _entities[key];
         }
 
-        public IEnumerable<TaskEntity> GetAll()
+        public IList<TaskEntity> GetAll()
         {
-            return _entities.Values;
+            var entities = _entities.Values.ToList();
+            entities.Sort((e1, e2) => string.CompareOrdinal(e1.Name, e2.Name));
+            return entities;
+        }
+
+        public IList<TaskEntity> GetAll(string sortType, string sortValue)
+        {
+            return GetAll();
         }
 
         public TaskEntity Save(TaskEntity entity)
@@ -60,6 +66,18 @@ namespace MEB.EasyTimeLog.Model
             SaveEntities();
 
             return newEntity;
+        }
+
+        public void Delete(Guid key)
+        {
+            if (!_entities.ContainsKey(key))
+            {
+                return;
+            }
+
+            _entities.Remove(key);
+
+            SaveEntities();
         }
 
         public void LoadEntities()

@@ -1,5 +1,6 @@
 ﻿using MEB.EasyTimeLog.UI.Common;
 using System.Collections.ObjectModel;
+using MEB.EasyTimeLog.Domain;
 
 namespace MEB.EasyTimeLog.UI.ViewModel.Property
 {
@@ -7,13 +8,14 @@ namespace MEB.EasyTimeLog.UI.ViewModel.Property
     {
         private bool _canExecute;
 
-        private ObservableCollection<string> _typeList;
-        private ObservableCollection<string> _logList;
+        private ObservableCollection<LogEntity> _logList;
+        private ObservableCollection<string> _sortTypes;
         private ObservableCollection<string> _sortValues;
 
         private string _selectedSortValue;
         private string _selectedSortType;
         private string _totalHours;
+        private LogEntity _selectedValue;
 
         public MainViewModelProperty()
         {
@@ -21,10 +23,16 @@ namespace MEB.EasyTimeLog.UI.ViewModel.Property
             _canExecute = true;
 
             // Set default values.
-            _typeList = new ObservableCollection<string>();
-            _logList = new ObservableCollection<string>();
+            _logList = new ObservableCollection<LogEntity>();
+            _sortTypes = new ObservableCollection<string>
+            {
+                "Task",
+                "Day",
+                "Week",
+                "Month",
+                "Year"
+            };
             _sortValues = new ObservableCollection<string>();
-            _selectedSortType = "Tasks";
             _totalHours = "0";
             _selectedSortValue = string.Empty;
         }
@@ -35,10 +43,16 @@ namespace MEB.EasyTimeLog.UI.ViewModel.Property
             get { return _canExecute; }
         }
 
-        public ObservableCollection<string> LogList
+        public ObservableCollection<LogEntity> LogList
         {
             set { SetField(ref _logList, value); }
             get { return _logList; }
+        }
+
+        public ObservableCollection<string> SortTypes
+        {
+            set { SetField(ref _sortTypes, value); }
+            get { return _sortTypes; }
         }
 
         public ObservableCollection<string> SortValues
@@ -46,17 +60,23 @@ namespace MEB.EasyTimeLog.UI.ViewModel.Property
             set { SetField(ref _sortValues, value); }
             get { return _sortValues; }
         }
-        
+
         public string SelectedSortValue
         {
-            set { SetField(ref _selectedSortValue, value?.Replace("System.Windows.Controls.ComboBoxItem: ", "")); }
+            set { SetField(ref _selectedSortValue,value); }
             get { return _selectedSortValue; }
         }
 
         public string SelectedSortType
         {
-            set { SetField(ref _selectedSortType, value?.Replace("System.Windows.Controls.ComboBoxItem: ", "")); }
+            set { SetField(ref _selectedSortType, value); }
             get { return _selectedSortType; }
+        }
+
+        public LogEntity SelectedValue
+        {
+            set { SetField(ref _selectedValue, value); }
+            get { return _selectedValue; }
         }
 
         public string TotalHours

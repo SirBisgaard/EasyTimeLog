@@ -11,6 +11,10 @@
     <AssemblyName>MEB.EasyTimeLog.DataAccess</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AssemblyInfoFilePath>Properties\AssemblyInfo.cs</AssemblyInfoFilePath>
+    <UpdateAssemblyVersion>False</UpdateAssemblyVersion>
+    <UpdateAssemblyFileVersion>False</UpdateAssemblyFileVersion>
+    <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,8 +49,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IDataStore.cs" />
+    <Compile Include="ISettingsStore.cs" />
     <Compile Include="JsonFileDataStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SettingsStore.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
