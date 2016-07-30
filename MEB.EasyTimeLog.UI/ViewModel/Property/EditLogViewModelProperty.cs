@@ -14,6 +14,7 @@ namespace MEB.EasyTimeLog.UI.ViewModel.Property
         private DateTime _selectedDate;
         private string _timeFrom;
         private string _timeTo;
+        private string _notes;
 
         public EditLogViewModelProperty()
         {
@@ -62,6 +63,12 @@ namespace MEB.EasyTimeLog.UI.ViewModel.Property
         {
             set { SetField(ref _timeTo, value); }
             get { return _timeTo; }
+        }
+
+        public string Notes
+        {
+            set { SetField(ref _notes, value); }
+            get { return _notes; }
         }
     }
 }

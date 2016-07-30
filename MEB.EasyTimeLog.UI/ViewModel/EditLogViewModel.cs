@@ -56,6 +56,7 @@ namespace MEB.EasyTimeLog.UI.ViewModel
             SelectedDate = _entity.Day;
             TimeFrom = _entity.TimeFrom.ToString(TimeUtil.TimeSpanFormat);
             TimeTo = _entity.TimeTo.ToString(TimeUtil.TimeSpanFormat);
+            Notes = _entity.Notes;
 
             // Start and show the view.
             View.Show();
@@ -101,7 +102,8 @@ namespace MEB.EasyTimeLog.UI.ViewModel
                     TaskRef = task,
                     Day = SelectedDate,
                     TimeFrom = from,
-                    TimeTo = to
+                    TimeTo = to,
+                    Notes = Notes
                 };
 
                 // Save the temp object.

@@ -93,7 +93,8 @@ namespace MEB.EasyTimeLog.UI.ViewModel
                     TaskRef = task,
                     TimeFrom = from,
                     TimeTo = to,
-                    Day = SelectedDate
+                    Day = SelectedDate,
+                    Notes = Notes
                 });
 
                 // Close window.

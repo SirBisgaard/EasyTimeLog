@@ -175,11 +175,14 @@ namespace MEB.EasyTimeLog.Model
             var timeTo = TimeSpan.Parse(json[nameof(LogEntity.TimeTo)].Value<string>(), CultureInfo.InvariantCulture);
             var day = DateTime.Parse(json[nameof(LogEntity.Day)].Value<string>(), CultureInfo.InvariantCulture);
 
+            var notes = json[nameof(LogEntity.Notes)]?.Value<string>() ?? "";
+
             var log = new LogEntity(id)
             {
                 TimeFrom = timeFrom,
                 TimeTo = timeTo,
                 Day = day,
+                Notes = notes,
                 Task = taskId,
                 TaskRef = _taskRepository.Get(taskId)
             };
@@ -195,6 +198,7 @@ namespace MEB.EasyTimeLog.Model
                 [nameof(LogEntity.TimeFrom)] = element.TimeFrom,
                 [nameof(LogEntity.TimeTo)] = element.TimeTo,
                 [nameof(LogEntity.Day)] = element.Day,
+                [nameof(LogEntity.Notes)] = element.Notes,
                 [nameof(LogEntity.Task)] = element.Task
             };
 

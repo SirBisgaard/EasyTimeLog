@@ -18,11 +18,19 @@ namespace MEB.EasyTimeLog.Domain
         public TimeSpan TimeTo { get; set; }
         public DateTime Day { get; set; }
         public Guid Task { get; set; }
+        public string Notes { get; set; }
         public TaskEntity TaskRef { get; set; }
 
         public override string ToString()
         {
-            return $"{Day.ToShortDateString()}:  {TimeFrom.ToString(@"hh\:mm")}-{TimeTo.ToString(@"hh\:mm")}  {TaskRef.Name}  {GetDuration()}";
+            var _string = $"{Day.ToShortDateString()}:  {TimeFrom.ToString(@"hh\:mm")}-{TimeTo.ToString(@"hh\:mm")}  {TaskRef.Name}  {GetDuration()}";
+
+            if(!string.IsNullOrEmpty(Notes))
+            {
+                _string += $"  ({Notes})";
+            }
+
+            return _string;
         }
 
         public double GetDuration()
