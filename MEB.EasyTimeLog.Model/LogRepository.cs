@@ -104,6 +104,7 @@ namespace MEB.EasyTimeLog.Model
                     TimeTo = entity.TimeTo,
                     Task = entity.Task,
                     Day = entity.Day,
+                    Notes = entity.Notes,
                     TaskRef = _taskRepository.Get(entity.Task)
                 };
 
